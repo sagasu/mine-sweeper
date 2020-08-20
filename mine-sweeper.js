@@ -1,5 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
+    newGame();
+});
+
+function showHideBombLocation() {
+    const bombs = document.querySelectorAll('.bomb');
+    const grayColor = 'gray';
+    let color = grayColor;
+    if(bombs[0].style.backgroundColor === grayColor)
+        color = 'orange';
+
+    for(var i = 0; i < bombs.length; i++){
+        bombs[i].style.backgroundColor = color;
+    }
+}
+
+function newGame(){
     const grid = document.querySelector('.grid');
+    grid.innerHTML = '';
     let bombAmount = 20;
     let isGameOver = false;
     let width = 10;
@@ -164,9 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         }, 10)
     }
-});
-
-
-
+}
 
 
