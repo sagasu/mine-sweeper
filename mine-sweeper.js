@@ -1,10 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     const grid = document.querySelector('.grid');
+    let bombAmount = 20;
+    let isGameOver = false;
     let width = 10;
     let squares = [];
-    let bombAmount = 20;
+    let flags = 0;
     
-
     function createBoard() {
         const bombsArray = Array(bombAmount).fill('bomb');
         const emptyArray = Array(width*width - bombAmount).fill('valid'); 
@@ -22,7 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             square.addEventListener('click', (e) => {
                 click(square);
-            })
+            });
+            square.oncontextmenu = (e) => {
+                e.preventDefault();
+                addFlag(square);
+            };
         }
 
         for(let i = 0; i < squares.length;i++){
@@ -60,51 +65,97 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     createBoard();
+
+    function addFlag(square){
+        if(isGameOver) return;
+
+        if(!square.classList.contains('checked') && (flags < bombAmount)){
+            if(!square.classList.contains('flag')){
+                square.classList.add('flag');
+                square.innerHTML = '🚩';
+                flags += 1;
+            }else{
+                square.classList.remove('flag');
+                square.innerHTML = '';
+                flags -= 1;
+            }
+        }
+    }
+
+    function gameOver(square){
+        isGameOver = true;
+        squares.forEach(square => {
+            if(square.classList.contains('bomb')) {
+                square.innerHTML = '💣';
+            }
+        })
+    }
+    
+    function click(square){
+        let currentId = square.id;
+        if (isGameOver) return;
+    
+        if (square.classList.contains('checked') || square.classList.contains('flag'))
+            return;
+    
+        if (square.classList.contains('bomb')){
+            gameOver(square)
+        } else {
+            let total = square.getAttribute('data');
+            if (total != 0){
+                square.classList.add('checked');
+                square.innerHTML = total;
+                return;
+            }
+            checkSquare(square, currentId);
+        }
+        square.classList.add('checked');
+    }
+    
+    function checkSquare(square, currentId) {
+        const isLeftEdge = (currentId % width === 0);
+        const isRightEdge = (currentId % width === width -1);
+    
+        var callClick = (modifier) => {
+            const newId = squares[parseInt(currentId) + modifier].id;
+            const newSquare = document.getElementById(newId);
+            click(newSquare);
+        }
+    
+        setTimeout(() => {
+            if(currentId > 0 && !isLeftEdge){
+                callClick(-1);
+            }
+    
+            if(currentId > 9 && !isRightEdge) {
+                callClick(1 - width);
+            }
+            if(currentId > 10){
+                callClick(-width);
+            }
+            if(currentId > 11 && !isLeftEdge){
+                callClick(-1-width);
+            }
+            if(currentId > 11 && !isLeftEdge){
+                callClick(-1-width);
+            }
+            if(currentId < 98 && !isRightEdge){
+                callClick(+1);
+            }
+            if(currentId < 90 && !isLeftEdge){
+                callClick(-1 + width);
+            }
+            if(currentId < 88 && !isRightEdge){
+                callClick(+1 + width);
+            }
+            if(currentId < 89){
+                callClick(width);
+            }
+        }, 10)
+    }
 });
 
-let isGameOver = false;
 
-function click(square){
-    let currentId = square.id;
-    if (isGameOver) return;
 
-    if (square.classList.contains('checked') || square.classList.contains('flag'))
-        return;
 
-    if (square.classList.contains('bomb')){
-        isGameOver = true;
-        alert('game over');
-    } else {
-        let total = square.getAttribute('data');
-        if (total != 0){
-            square.classList.add('checked');
-            square.innerHTML = total;
-            return;
-        }
-        checkSquare(square, currentId);
-    }
-    square.classList.add('checked');
-}
 
-function checkSquare(square, currentId) {
-    const isLeftEdge = (currentId % width === 0);
-    const isRightEdge = (currentId % width === width -1);
-
-    setTimeout(() => {
-        if(currentId > 0 && !isLeftEdge){
-            const newId = squares[parseInt(currentId) - 1].id;
-            const newSquare = document.getElementById(newId);
-            click(newSquare);
-        }
-
-        if(currentId > 9 && !isRightEdge) {
-            const newId = squares[parseInt(currentId) + 1 - width].id;
-            const newSquare = document.getElementById(newId);
-            click(newSquare);
-        }
-        if(currentId > 10){
-            
-        }
-
-    }, 10)
-}
