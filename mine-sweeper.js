@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function gameOver(square){
+    function gameOver(){
         isGameOver = true;
         squares.forEach(square => {
             if(square.classList.contains(bombLabel)) {
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
     
         if (square.classList.contains(bombLabel)){
-            gameOver(square)
+            gameOver();
         } else {
             let total = square.getAttribute(dataLabel);
             if (total != 0){
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 square.innerHTML = total;
                 return;
             }
-            checkSquare(square, currentId);
+            checkSquare(currentId);
         }
         square.classList.add(checkedLabel);
     }
@@ -129,12 +129,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if(matches === bombAmount){
                 isGameOver = true;
                 alert('You won!');
+                return;
             }
 
         }
     }
     
-    function checkSquare(square, currentId) {
+    function checkSquare(currentId) {
         const isLeftEdge = (currentId % width === 0);
         const isRightEdge = (currentId % width === width -1);
     
@@ -145,34 +146,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     
         setTimeout(() => {
-            if(currentId > 0 && !isLeftEdge){
-                callClick(-1);
+            const logic = [
+                new Logic(currentId > 0 && !isLeftEdge, -1),
+                new Logic(currentId > 9 && !isRightEdge, 1 - width),
+                new Logic(currentId > 10, -width),
+                new Logic(currentId > 11 && !isLeftEdge, -1-width),
+                new Logic(currentId < 98 && !isRightEdge, 1),
+                new Logic(currentId < 90 && !isLeftEdge, -1 + width),
+                new Logic(currentId < 88 && !isRightEdge, +1 + width),
+                new Logic(currentId < 89, width),
+            ];
+
+            for(var i = 0; i < logic.length;i++){
+                if(logic[i].predicate)
+                    callClick(logic[i].bombElement);
             }
-    
-            if(currentId > 9 && !isRightEdge) {
-                callClick(1 - width);
-            }
-            if(currentId > 10){
-                callClick(-width);
-            }
-            if(currentId > 11 && !isLeftEdge){
-                callClick(-1-width);
-            }
-            if(currentId > 11 && !isLeftEdge){
-                callClick(-1-width);
-            }
-            if(currentId < 98 && !isRightEdge){
-                callClick(+1);
-            }
-            if(currentId < 90 && !isLeftEdge){
-                callClick(-1 + width);
-            }
-            if(currentId < 88 && !isRightEdge){
-                callClick(+1 + width);
-            }
-            if(currentId < 89){
-                callClick(width);
-            }
+
         }, 10)
     }
 });
