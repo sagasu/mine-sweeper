@@ -4,10 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function showHideBombLocation() {
     const bombs = document.querySelectorAll('.bomb');
-    const grayColor = 'gray';
+    const grayColor = 'rgb(154, 230, 180)';
     let color = grayColor;
-    if(bombs[0].style.backgroundColor === grayColor)
-        color = 'orange';
+    if(bombs[0].style.backgroundColor === grayColor || bombs[0].style.backgroundColor === '')
+        color = 'gray';
 
     for(var i = 0; i < bombs.length; i++){
         bombs[i].style.backgroundColor = color;

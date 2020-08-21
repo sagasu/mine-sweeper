@@ -3,7 +3,8 @@
     width: 400px;
     display: flex;
     flex-wrap: wrap;
-    background-color: gray;
+    background-color: #9ae6b4;
+    border-radius: 25px;
 }
 
 .grid div{
@@ -12,8 +13,28 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 25px;
 }
 
 .checked {
-    background-color: red;
+    background-color: #f6e05e;
+}
+
+.control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button {
+    margin: 20px;
+    border-radius: 5px;
+    background-color: #bee3f8;
+    height: 40px;
+    color: white;
+    font-weight: bold;
+}
+
+.body {
+    width: 400px;
 }
